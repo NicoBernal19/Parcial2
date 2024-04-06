@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 public class Employee {
     @Id
     @Column(name = "EMPLOYEE_ID")
-    private Long employeeId;
+    private String employeeId;
 
     @Column(name = "FirstName")
     private String firstName;
@@ -27,7 +27,7 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(Long employeeId, String firstName, String lastName, String role, Double salary) {
+    public Employee(String employeeId, String firstName, String lastName, String role, Double salary) {
         this.employeeId = employeeId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -35,11 +35,11 @@ public class Employee {
         this.salary = salary;
     }
 
-    public Long getEmployeeId() {
+    public String getEmployeeId() {
         return employeeId;
     }
 
-    public void setEmployeeId(Long employeeId) {
+    public void setEmployeeId(String employeeId) {
         this.employeeId = employeeId;
     }
 

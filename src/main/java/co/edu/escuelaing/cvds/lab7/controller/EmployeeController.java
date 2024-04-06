@@ -2,6 +2,7 @@ package co.edu.escuelaing.cvds.lab7.controller;
 
 import co.edu.escuelaing.cvds.lab7.model.Employee;
 import co.edu.escuelaing.cvds.lab7.repository.EmployeeRepository;
+import co.edu.escuelaing.cvds.lab7.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,19 +14,29 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+    @Autowired
+    private EmployeeService employeeService;
 
-    @GetMapping("/employee_name")
-    public List<Employee> getEmployeeName(@RequestParam String firstName, @RequestParam String lastName){
-        return employeeRepository.findByNameOrSurname(firstName, lastName);
+    @RequestMapping("/{id}")
+    @ResponseBody
+    public Employee getEmployeeById(@PathVariable String id) {
+        return employeeService.getEmployee(id);
     }
 
-    @PostMapping("/employee")
-    public Employee createEmployee(@RequestBody Employee newEmployee) {
-        return employeeRepository.save(newEmployee);
+    @GetMapping("/")
+    @ResponseBody
+    public List<Employee> getAllEmployee() {
+        return employeeService.getAllEmployee();
+    }
+    @PostMapping("/")
+    @ResponseBody
+    public Employee createEmployee(@RequestBody Employee employee) {
+        return employeeService.addEmployee(employee);
+
     }
 
     @PutMapping("/employee/{id}")
-    public Employee updateEmployee(@PathVariable Long id, @RequestBody Employee updatedEmployee) {
+    public Employee updateEmployee(@PathVariable String id, @RequestBody Employee updatedEmployee) {
         return employeeRepository.findById(id)
                 .map(employee -> {
                     employee.setFirstName(updatedEmployee.getFirstName());
@@ -40,7 +51,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/employee/{id}")
-    public void deleteEmployee(@PathVariable Long id) {
-        employeeRepository.deleteById(id);
+    public void removeEmployee(@PathVariable String id) {
+        employeeService.deleteEmployee(id);
     }
 }

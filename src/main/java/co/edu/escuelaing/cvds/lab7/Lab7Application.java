@@ -35,7 +35,7 @@ public class Lab7Application {
 		SpringApplication.run(Lab7Application.class, args);
 	}
 
-	@Bean
+	/*@Bean
 	public CommandLineRunner run() {
 		return (args) -> {
 			log.info("Adding Configurations....");
@@ -50,7 +50,7 @@ public class Lab7Application {
 			userRepository.save(new User("admin@site.org", "admin", Arrays.asList(UserRole.ADMINISTRADOR, UserRole.CLIENTE)));
 		};
 	}
-
+*/
 	@Bean
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
