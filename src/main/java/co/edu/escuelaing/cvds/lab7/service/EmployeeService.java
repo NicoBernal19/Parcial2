@@ -1,13 +1,12 @@
 package co.edu.escuelaing.cvds.lab7.service;
 
-import co.edu.escuelaing.cvds.lab7.model.Configuration;
 import co.edu.escuelaing.cvds.lab7.model.Employee;
-import co.edu.escuelaing.cvds.lab7.repository.ConfigurationRepository;
 import co.edu.escuelaing.cvds.lab7.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeService {
@@ -22,28 +21,24 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
-    public Employee getEmployee(String employeeId) {
-        return employeeRepository.findByEmployeeId(employeeId);
+    public Optional<Employee> getEmployee(String id) {
+        return employeeRepository.findById(id);
     }
 
-    public List<Employee> getAllEmployee() {
+    public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
 
     public Employee updateEmployee(Employee employee) {
-        if (employeeRepository.findByEmployeeId(employee.getEmployeeId()) == null) {
+        System.out.println(employee);
+        if (employeeRepository.findById(employee.getEmployeeId()).isPresent()) {
             return employeeRepository.save(employee);
         }
-        else {
-
-        }
-
         return null;
     }
 
-    public void deleteEmployee(String employeeId) {
-        employeeRepository.deleteById(employeeId);
+    public void deleteEmployee(String employee_id) {
+        employeeRepository.deleteById(employee_id);
     }
-
 
 }

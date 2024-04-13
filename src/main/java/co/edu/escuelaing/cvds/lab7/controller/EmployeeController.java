@@ -1,57 +1,67 @@
 package co.edu.escuelaing.cvds.lab7.controller;
 
 import co.edu.escuelaing.cvds.lab7.model.Employee;
-import co.edu.escuelaing.cvds.lab7.repository.EmployeeRepository;
 import co.edu.escuelaing.cvds.lab7.service.EmployeeService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
-@RestController
-@RequestMapping(value = "/employee")
+@Controller
+@RequestMapping(value = "/api")
 public class EmployeeController {
+    private final EmployeeService employeeService;
 
     @Autowired
-    private EmployeeRepository employeeRepository;
-    @Autowired
-    private EmployeeService employeeService;
-
-    @RequestMapping("/{id}")
-    @ResponseBody
-    public Employee getEmployeeById(@PathVariable String id) {
-        return employeeService.getEmployee(id);
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/employees")
     @ResponseBody
-    public List<Employee> getAllEmployee() {
-        return employeeService.getAllEmployee();
+    public List<Employee> getAllEmployees() {
+        return employeeService.getAllEmployees();
     }
-    @PostMapping("/")
-    @ResponseBody
-    public Employee createEmployee(@RequestBody Employee employee) {
-        return employeeService.addEmployee(employee);
 
+    @GetMapping("/employee/{id}")
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable String id) {
+        Optional<Employee> employee = employeeService.getEmployee(id);
+
+        if (employee.isPresent()) {
+            return ResponseEntity.ok(employee.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/employee")
+    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee){
+        Employee savedEmployee = employeeService.addEmployee(employee);
+        return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
     }
 
     @PutMapping("/employee/{id}")
-    public Employee updateEmployee(@PathVariable String id, @RequestBody Employee updatedEmployee) {
-        return employeeRepository.findById(id)
-                .map(employee -> {
-                    employee.setFirstName(updatedEmployee.getFirstName());
-                    employee.setLastName(updatedEmployee.getLastName());
-                    // Set other fields as needed
-                    return employeeRepository.save(employee);
-                })
-                .orElseGet(() -> {
-                    updatedEmployee.setEmployeeId(id);
-                    return employeeRepository.save(updatedEmployee);
-                });
+    public ResponseEntity<Employee> updateEmployee(
+            @PathVariable("id") String id,
+            @RequestBody Employee employee
+    ){
+        employee.setEmployeeId(id);
+        Employee updatedEmployee = employeeService.updateEmployee(employee);
+        return new ResponseEntity<Employee>(updatedEmployee, HttpStatus.OK);
     }
 
-    @DeleteMapping("/employee/{id}")
-    public void removeEmployee(@PathVariable String id) {
+    @DeleteMapping("employee/{id}")
+    public ResponseEntity<String> deleteEmployee(@PathVariable("id") String id){
+
+        // delete employee from DB
         employeeService.deleteEmployee(id);
+
+        return new ResponseEntity<String>("Employee deleted successfully!.", HttpStatus.OK);
     }
+
 }
