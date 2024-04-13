@@ -26,7 +26,7 @@ public class ProductController {
     public List<Product> getAllProducts() {
         return productService.getAllProducts();
     }
-    @GetMapping("/product/:id")
+    @GetMapping("/product/:{id}")
     public ResponseEntity<Product> getProductById(@PathVariable String id) {
         Optional<Product> product = productService.getProduct(id);
 
@@ -47,7 +47,7 @@ public class ProductController {
         Product updateProduct = productService.updateProduct(product);
         return new ResponseEntity<Product>(updateProduct, HttpStatus.OK);
     }
-    @DeleteMapping("product/:id")
+    @DeleteMapping("product/:{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable("id") String id){
         productService.deleteProduct(id);
         return new ResponseEntity<String>("Product deleted", HttpStatus.OK);
